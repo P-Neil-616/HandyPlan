@@ -1620,9 +1620,11 @@ function recalcSpotsFrom(startIndex) {
           const savedJob = item.job;
 
           if (savedJob && savedJob.status !== "complete") {
-          draftJob = JSON.parse(JSON.stringify(savedJob));
-          draftJob._fromEdit = true;
-        }
+            draftJob = JSON.parse(JSON.stringify(savedJob));
+            draftJob._active = true;
+          } else {
+            return openInvoice(savedJob);
+          }
 
           if (savedJob && savedJob.status === "complete") {
             openInvoice(savedJob);
