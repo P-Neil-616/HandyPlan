@@ -153,34 +153,96 @@ document.addEventListener("DOMContentLoaded", () => {
 
   travelRateInput?.addEventListener("input", () => {
 
-    let v = travelRateInput.value.replace(/\D/g,"");
-    if (v.length > 3) v = v.slice(0,3);
-    if (Number(v) > 999) v = "999";
-    travelRateInput.value = v;
+    let raw = travelRateInput.value;
+
+    // allow typing "." or ending with "."
+    if (raw === "." || raw.endsWith(".")) {
+      draftJob.travelRate = raw;
+      return;
+    }
+
+    // clean (keep digits + dot)
+    let v = raw.replace(/[^\d.]/g, "");
+
+    // only one dot
+    const firstDot = v.indexOf(".");
+    if (firstDot !== -1) {
+      v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+    }
+
+    // split
+    let [intPart, decPart] = v.split(".");
+
+    // cap integer length
+    if (intPart.length > 3) intPart = intPart.slice(0, 3);
+
+    // cap decimals
+    if (decPart !== undefined) decPart = decPart.slice(0, 2);
+
+    v = decPart !== undefined ? `${intPart}.${decPart}` : intPart;
+
+    // cap max value
+    if (v !== "" && Number(v) > 999) v = "999";
+
+    // only write back if changed
+    if (v !== raw) {
+      travelRateInput.value = v;
+    }
+
     draftJob.travelRate = v;
 
     const meta = JSON.parse(localStorage.getItem(META_KEY) || "{}");
-    meta.defaultTravelRate = draftJob.travelRate;
+    meta.defaultTravelRate = v;
     localStorage.setItem(META_KEY, JSON.stringify(meta));
 
-    refreshTravelUI();
     refreshTotalUI();
 
   });
 
   durationRateInput?.addEventListener("input", () => {
 
-    let v = durationRateInput.value.replace(/\D/g,"");
-    if (v.length > 3) v = v.slice(0,3);
-    if (Number(v) > 999) v = "999";
-    durationRateInput.value = v;
+    let raw = durationRateInput.value;
+
+    // allow typing "." or ending with "."
+    if (raw === "." || raw.endsWith(".")) {
+      draftJob.durationRate = raw;
+      return;
+    }
+
+    // clean (keep digits + dot)
+    let v = raw.replace(/[^\d.]/g, "");
+
+    // only one dot
+    const firstDot = v.indexOf(".");
+    if (firstDot !== -1) {
+      v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+    }
+
+    // split
+    let [intPart, decPart] = v.split(".");
+
+    // cap integer length
+    if (intPart.length > 3) intPart = intPart.slice(0, 3);
+
+    // cap decimals
+    if (decPart !== undefined) decPart = decPart.slice(0, 2);
+
+    v = decPart !== undefined ? `${intPart}.${decPart}` : intPart;
+
+    // cap max value
+    if (v !== "" && Number(v) > 999) v = "999";
+
+    // only write back if changed
+    if (v !== raw) {
+      durationRateInput.value = v;
+    }
+
     draftJob.durationRate = v;
 
     const meta = JSON.parse(localStorage.getItem(META_KEY) || "{}");
-    meta.defaultDurationRate = draftJob.durationRate;
+    meta.defaultDurationRate = v;
     localStorage.setItem(META_KEY, JSON.stringify(meta));
 
-    refreshDurationUI();
     refreshTotalUI();
 
   });
@@ -1655,30 +1717,6 @@ function recalcSpotsFrom(startIndex) {
       return;
     }
 
-    // wipe only job-specific fields
-    draftJob.title = "";
-    draftJob.travelMiles = "";
-    draftJob.durationMins = "";
-    draftJob.notes = "";
-    if (notesBox) notesBox.value = "";
-
-    // keep the default rates
-    // draftJob.travelRate stays
-    // draftJob.durationRate stays
-
-    // wipe visible inputs
-    titleInput.value = "";
-    if (travelMilesInput) travelMilesInput.value = "";
-    if (durationMinsInput) durationMinsInput.value = "";
-    draftJob.people = [];
-    peopleList.innerHTML = "";
-    resetToolsForNewJob();
-    draftJob.inventory = (draftJob.inventory || []).map(it => ({
-      name: it.name,
-      priceEach: it.priceEach,
-      qty: 0
-    }));
-
     renderInventoryFromDraft();      // clears qty inputs + refreshes inv total/badge
     refreshTotalUI();                // updates the main job total
     if (notesValueBox) notesValueBox.textContent = "–";
@@ -1880,56 +1918,33 @@ function recalcSpotsFrom(startIndex) {
     editorMode = "draft";
     invoiceJobRef = null;
 
-    draftJob = {
-      title: "",
-      invoiceNumber: null,
-      travelMiles: "",
-      travelRate: draftJob.travelRate || "",
-      durationMins: "",
-      durationRate: draftJob.durationRate || "",
-      actualDurationMins: null,
-      people: [],
-      tools: masterTools.map(t => ({
-        ...t,
-        checked: !!t.core
-      })),
-
-      inventory: masterInventory.map(it => ({
-        name: it.name,
-        priceEach: it.priceEach,
-        qty: 0
-      })),
-      notes: "",
-      timerMs: 0,
-      timerRunning: false,
-      timerStartedAt: null,
-      accumulatedMs: 0
-    };
-
-    // wipe visible editor inputs so UI matches the fresh draftJob
-    if (titleInput) titleInput.value = "";
-    if (notesBox) notesBox.value = "";
-
-    // these are panel inputs, but clear anyway so nothing "looks carried over"
-    if (travelMilesInput) travelMilesInput.value = "";
-    if (durationMinsInput) durationMinsInput.value = "";
-
-    // clear people UI list for the new job
-    if (peopleList) peopleList.innerHTML = "";
-    if (peopleList) peopleList.innerHTML = "";
-    refreshPeopleTotalUI();
-
-    activeSpotIndex = spotIndex;
-
-    const spotItem = days[dayIndex].timelineList[spotIndex];
-    draftJob.spotStartMins = spotItem.timeMins;
-
-    resetToolsForNewJob();
-
-    draftJob.travelMiles = "";
-    draftJob.durationMins = "";
-    draftJob.startedAt = null;
-    draftJob.accumulatedMs = 0;
+    if (!draftJob || !draftJob._active) {
+      draftJob = {
+        title: "",
+        invoiceNumber: null,
+        travelMiles: "",
+        travelRate: draftJob?.travelRate || "",
+        durationMins: "",
+        durationRate: draftJob?.durationRate || "",
+        actualDurationMins: null,
+        people: [],
+        tools: masterTools.map(t => ({
+          ...t,
+          checked: !!t.core
+        })),
+        inventory: masterInventory.map(it => ({
+          name: it.name,
+          priceEach: it.priceEach,
+          qty: 0
+        })),
+        notes: "",
+        timerMs: 0,
+        timerRunning: false,
+        timerStartedAt: null,
+        accumulatedMs: 0,
+        _active: true   // 👈 THIS is the key
+      };
+    }
 
     bottomMode = "draft";
     updateBottomBarMode();
