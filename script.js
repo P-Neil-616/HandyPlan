@@ -1982,7 +1982,6 @@ function recalcSpotsFrom(startIndex) {
   };
 
   function openEditorForSpot(spotIndex) {
-    draftJob._active = false;
 
     editingJobIndex = null;
     updateCreateUpdateLabel();
@@ -2014,8 +2013,9 @@ function recalcSpotsFrom(startIndex) {
         timerRunning: false,
         timerStartedAt: null,
         accumulatedMs: 0,
-        _active: true   // 👈 THIS is the key
+        _active: true
       };
+      draftJob._active = false;
     }
 
     bottomMode = "draft";
