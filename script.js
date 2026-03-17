@@ -2382,6 +2382,11 @@ function recalcSpotsFrom(startIndex) {
           saveAll();
         }
       }
+      const t = draftJob.tools.find(x => x.name.toLowerCase() === name.toLowerCase());
+      if (t) {
+        t.core = (row.dataset.state === "core");
+        t.checked = (row.dataset.state !== "blank");
+      }
 
     });
 
