@@ -1943,13 +1943,13 @@ function recalcSpotsFrom(startIndex) {
         });
       }
     }
-    draftJob._active = false;
     saveAll();
 
     console.log("AFTER WIPE", draftJob.title, draftJob.notes);
 
     // close editor
     jobBlock.classList.add("hidden");
+    draftJob._active = false;
   };
 
   function openEditorForSpot(spotIndex) {
