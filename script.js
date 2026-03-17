@@ -98,6 +98,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!Array.isArray(parsed) || parsed.length === 0) return false;
 
       days = reviveDays(parsed);
+      for (const day of days) {
+      for (const item of day.timelineList) {
+        if (item.type === "job" && item.job) {
+          if (item.job.state === "running" || item.job.isLive) {
+            item.job.state = "paused";
+            item.job.isLive = false;
+            item.job.timerStartedAt = null;
+          }
+        }
+      }
+    }
       sortDaysChronologically();
 
       return true;
@@ -327,6 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // mark running
       liveJobRef.isLive = true;
       liveJobRef.state = "running";
+
+      liveJobRef.timerStartedAt = Date.now();
 
       enforceJobOrdering();
       recalcSpotsFrom(0);
@@ -640,6 +653,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     liveJobRef.isLive = false;
     liveJobRef.state = "paused";
+    item.job.timerStartedAt = null;
     saveAll();
 
     draftJob.accumulatedMs = liveJobRef.accumulatedMs;
@@ -1614,11 +1628,18 @@ function recalcSpotsFrom(startIndex) {
           const job = days[dayIndex].timelineList[editingJobIndex].job;
 
           if (job.state === "running" && job.timerStartedAt) {
-            timerElapsedMs =
-              job.accumulatedMs + (Date.now() - job.timerStartedAt);
+            const extra = Date.now() - job.timerStartedAt;
+
+            job.accumulatedMs = Number(job.accumulatedMs || 0) + extra;
+
+            job.timerStartedAt = Date.now(); // reset anchor
+            saveAll();
+
+            timerElapsedMs = job.accumulatedMs;
           } else {
             timerElapsedMs = Number(job.accumulatedMs || 0);
           }
+
           updateTimerDisplay();
           if (savedJob && savedJob.isLive) {
             isRunning = true;
