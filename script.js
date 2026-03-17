@@ -1138,24 +1138,16 @@ function recalcSpotsFrom(startIndex) {
 
   async function shareInvoice(job) {
     const text = buildInvoiceText(job);
-
     if (navigator.share) {
       try {
         await navigator.share({
           title: "Invoice",
           text: text
         });
-        return;
+        return; // IMPORTANT: stops fallback
       } catch (e) {
-        // user cancel = do nothing
+        return; // ALSO stop fallback on cancel
       }
-    }
-
-    try {
-      await navigator.clipboard.writeText(text);
-      alert("Copied invoice to clipboard");
-    } catch {
-      alert(text);
     }
   }
 
