@@ -1889,6 +1889,7 @@ function recalcSpotsFrom(startIndex) {
       priceEach: it.priceEach,
       qty: 0
     }));
+
     renderInventoryFromDraft();
     draftJob.notes = "";
 
@@ -1945,11 +1946,14 @@ function recalcSpotsFrom(startIndex) {
     draftJob._active = false;
     saveAll();
 
+    console.log("AFTER WIPE", draftJob.title, draftJob.notes);
+
     // close editor
     jobBlock.classList.add("hidden");
   };
 
   function openEditorForSpot(spotIndex) {
+    draftJob._active = false;
 
     editingJobIndex = null;
     updateCreateUpdateLabel();
