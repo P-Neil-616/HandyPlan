@@ -1138,6 +1138,7 @@ function recalcSpotsFrom(startIndex) {
 
   async function shareInvoice(job) {
     const text = buildInvoiceText(job);
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -1277,7 +1278,20 @@ function recalcSpotsFrom(startIndex) {
     }
 
     renderTimeline();
+
+    draftJob.inventory = masterInventory.map(it => ({
+      name: it.name,
+      priceEach: it.priceEach,
+      qty: 0
+    }));
+
+    draftJob.tools = masterTools.map(t => ({
+      ...t,
+      checked: !!t.core
+    }));
+
     renderInventoryFromDraft();
+    renderToolsFromDraft();
     refreshTimelineLabels();
     setHeaderText();
     refreshDraftUI();
@@ -2357,6 +2371,16 @@ function recalcSpotsFrom(startIndex) {
         row.dataset.state = "blank";
         check.checked = false;
         row.classList.remove("core-tool");
+      }
+
+      // persist to masterTools
+      const toolName = nameInput.value.trim();
+      if (toolName) {
+        const mt = masterTools.find(t => t.name.toLowerCase() === toolName.toLowerCase());
+        if (mt) {
+          mt.core = (row.dataset.state === "core");
+          saveAll();
+        }
       }
 
     });
