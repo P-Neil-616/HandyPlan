@@ -1339,6 +1339,18 @@ function recalcSpotsFrom(startIndex) {
   function loadDay(i) {
     dayIndex = i;
 
+    for (const day of days) {
+      for (const item of day.timelineList) {
+        if (item.type === "job" && item.job) {
+          if (item.job.state === "running" || item.job.isLive) {
+            item.job.state = "paused";
+            item.job.isLive = false;
+            item.job.timerStartedAt = null;
+          }
+        }
+      }
+    }
+
     const d = days[dayIndex];
     if (typeof d.dayStartMins !== "number") d.dayStartMins = 8 * 60;
 
