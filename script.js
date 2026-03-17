@@ -1619,6 +1619,11 @@ function recalcSpotsFrom(startIndex) {
 
           const savedJob = item.job;
 
+          if (savedJob && savedJob.status !== "complete") {
+          draftJob = JSON.parse(JSON.stringify(savedJob));
+          draftJob._fromEdit = true;
+        }
+
           if (savedJob && savedJob.status === "complete") {
             openInvoice(savedJob);
             return;
@@ -1628,11 +1633,6 @@ function recalcSpotsFrom(startIndex) {
           updateCreateUpdateLabel();
 
           invoiceJobRef = null;
-
-          // deep copy saved job into draft
-          draftJob = JSON.parse(JSON.stringify(savedJob || {}));
-          draftJob._fromEdit = true;
-          draftJob._active = true;
 
           if (durationRateInput) durationRateInput.value = draftJob.durationRate || "";
           if (travelRateInput) travelRateInput.value = draftJob.travelRate || "";
