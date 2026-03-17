@@ -1738,7 +1738,7 @@ function recalcSpotsFrom(startIndex) {
 
     if (editorMode === "invoice") {
       editorMode = "draft";   // force reset
-      invoiceJobRef = null;   // clear pointer
+      invoiceJobRef = null;
 
       if (editingJobIndex !== null) {
         draftJob._active = false;
@@ -1771,6 +1771,29 @@ function recalcSpotsFrom(startIndex) {
 
     // close editor
     jobBlock.classList.add("hidden");
+
+    if (editingJobIndex !== null) {
+  // we were editing a job → do NOT let it become the next draft
+      draftJob = {
+        title: "",
+        invoiceNumber: null,
+        travelMiles: "",
+        travelRate: draftJob?.travelRate || "",
+        durationMins: "",
+        durationRate: draftJob?.durationRate || "",
+        actualDurationMins: null,
+        people: [],
+        tools: masterTools.map(t => ({ ...t, checked: !!t.core })),
+        inventory: masterInventory.map(it => ({
+          name: it.name,
+          priceEach: it.priceEach,
+          qty: 0
+        })),
+        notes: "",
+        accumulatedMs: 0,
+        _active: true
+      };
+    }
   };
 
   acceptBtn.onclick = async (e) => {
