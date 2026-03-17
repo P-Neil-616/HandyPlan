@@ -1942,6 +1942,7 @@ function recalcSpotsFrom(startIndex) {
         });
       }
     }
+    draftJob._active = false;
     saveAll();
 
     // close editor
