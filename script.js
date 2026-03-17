@@ -1630,7 +1630,18 @@ function recalcSpotsFrom(startIndex) {
           invoiceJobRef = null;
 
           // deep copy saved job into draft
-          draftJob = JSON.parse(JSON.stringify(savedJob || {}));
+          const j = JSON.parse(JSON.stringify(savedJob || {}));
+
+          draftJob.title = j.title || "";
+          draftJob.notes = j.notes || "";
+          draftJob.people = j.people || [];
+          draftJob.tools = j.tools || [];
+          draftJob.inventory = j.inventory || [];
+          draftJob.travelMiles = j.travelMiles || "";
+          draftJob.durationMins = j.durationMins || "";
+          draftJob.accumulatedMs = j.accumulatedMs || 0;
+          draftJob._active = true;
+          draftJob._fromEdit = true;
 
           if (durationRateInput) durationRateInput.value = draftJob.durationRate || "";
           if (travelRateInput) travelRateInput.value = draftJob.travelRate || "";
@@ -1988,7 +1999,7 @@ function recalcSpotsFrom(startIndex) {
     editorMode = "draft";
     invoiceJobRef = null;
 
-    if (!draftJob || !draftJob._active) {
+    if (!draftJob || !draftJob._active || draftJob._fromEdit) {
       draftJob = {
         title: "",
         invoiceNumber: null,
