@@ -1631,6 +1631,7 @@ function recalcSpotsFrom(startIndex) {
 
           // deep copy saved job into draft
           const j = JSON.parse(JSON.stringify(savedJob || {}));
+          draftJob._active = false;
 
           draftJob.title = j.title || "";
           draftJob.notes = j.notes || "";
