@@ -382,7 +382,14 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const day of days) {
       for (const item of day.timelineList) {
         if (item.type === "job" && item.job && item.job.isLive) {
-          item.job.accumulatedMs = timerElapsedMs;
+          const now = Date.now();
+
+          const runningMs = timerStartTime
+            ? (now - timerStartTime)
+            : 0;
+
+          item.job.accumulatedMs =
+            Number(item.job.accumulatedMs || 0) + runningMs;
           item.job.isLive = false;
           item.job.state = "paused";
           pausedAny = true;
