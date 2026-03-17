@@ -1740,6 +1740,10 @@ function recalcSpotsFrom(startIndex) {
       editorMode = "draft";   // force reset
       invoiceJobRef = null;   // clear pointer
 
+      if (editingJobIndex !== null) {
+        draftJob._active = false;
+      }
+
       jobBlock.classList.add("hidden");
 
       bottomMode = "timeline";
