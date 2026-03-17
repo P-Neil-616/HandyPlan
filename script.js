@@ -1630,19 +1630,9 @@ function recalcSpotsFrom(startIndex) {
           invoiceJobRef = null;
 
           // deep copy saved job into draft
-          const j = JSON.parse(JSON.stringify(savedJob || {}));
-          draftJob._active = false;
-
-          draftJob.title = j.title || "";
-          draftJob.notes = j.notes || "";
-          draftJob.people = j.people || [];
-          draftJob.tools = j.tools || [];
-          draftJob.inventory = j.inventory || [];
-          draftJob.travelMiles = j.travelMiles || "";
-          draftJob.durationMins = j.durationMins || "";
-          draftJob.accumulatedMs = j.accumulatedMs || 0;
-          draftJob._active = true;
+          draftJob = JSON.parse(JSON.stringify(savedJob || {}));
           draftJob._fromEdit = true;
+          draftJob._active = true;
 
           if (durationRateInput) durationRateInput.value = draftJob.durationRate || "";
           if (travelRateInput) travelRateInput.value = draftJob.travelRate || "";
