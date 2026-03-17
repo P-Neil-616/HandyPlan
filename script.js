@@ -1617,19 +1617,26 @@ function recalcSpotsFrom(startIndex) {
         card.onclick = () => {
           if (bottomMode !== "timeline") return;
 
-          const savedJob = item.job;
+        const savedJob = item.job;
 
-          if (savedJob && savedJob.status !== "complete") {
-            draftJob = JSON.parse(JSON.stringify(savedJob));
-            draftJob._active = true;
-          } else {
-            return openInvoice(savedJob);
-          }
+        // completed → DO NOT TOUCH DRAFT
+        if (savedJob && savedJob.status === "complete") {
+          openInvoice(savedJob);
+          return;
+        }
 
-          if (savedJob && savedJob.status === "complete") {
-            openInvoice(savedJob);
-            return;
-          }
+        // only unfinished jobs can load into draft
+        if (savedJob && savedJob.status === "complete") {
+          openInvoice(savedJob);
+          return;
+        }
+
+        // ONLY load into draft if editing
+        editingJobIndex = i;
+        updateCreateUpdateLabel();
+
+        draftJob = JSON.parse(JSON.stringify(savedJob));
+        draftJob._active = true;
 
           editingJobIndex = i;
           updateCreateUpdateLabel();
@@ -1991,34 +1998,31 @@ function recalcSpotsFrom(startIndex) {
     editorMode = "draft";
     invoiceJobRef = null;
 
-    if (!draftJob || !draftJob._active || draftJob._fromEdit) {
-      draftJob = {
-        title: "",
-        invoiceNumber: null,
-        travelMiles: "",
-        travelRate: draftJob?.travelRate || "",
-        durationMins: "",
-        durationRate: draftJob?.durationRate || "",
-        actualDurationMins: null,
-        people: [],
-        tools: masterTools.map(t => ({
-          ...t,
-          checked: !!t.core
-        })),
-        inventory: masterInventory.map(it => ({
-          name: it.name,
-          priceEach: it.priceEach,
-          qty: 0
-        })),
-        notes: "",
-        timerMs: 0,
-        timerRunning: false,
-        timerStartedAt: null,
-        accumulatedMs: 0,
-        _active: true
-      };
-      draftJob._active = false;
-    }
+    draftJob = {
+      title: "",
+      invoiceNumber: null,
+      travelMiles: "",
+      travelRate: draftJob?.travelRate || "",
+      durationMins: "",
+      durationRate: draftJob?.durationRate || "",
+      actualDurationMins: null,
+      people: [],
+      tools: masterTools.map(t => ({
+        ...t,
+        checked: !!t.core
+      })),
+      inventory: masterInventory.map(it => ({
+        name: it.name,
+        priceEach: it.priceEach,
+        qty: 0
+      })),
+      notes: "",
+      timerMs: 0,
+      timerRunning: false,
+      timerStartedAt: null,
+      accumulatedMs: 0,
+      _active: true
+    };
 
     bottomMode = "draft";
     updateBottomBarMode();
