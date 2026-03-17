@@ -354,6 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // keep saved job updated continuously
         liveJobRef.accumulatedMs = timerElapsedMs;
+        saveAll();
 
         // keep draft in sync ONLY if you’re editing this job
         if (editingJobIndex !== null) {
@@ -403,6 +404,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLiveUIState();
     renderTimeline();
     botStart.textContent = "Resume";
+
+    saveAll();
   };
 
   const confirmOverlay = document.getElementById("confirmOverlay");
@@ -637,6 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     liveJobRef.isLive = false;
     liveJobRef.state = "paused";
+    saveAll();
 
     draftJob.accumulatedMs = liveJobRef.accumulatedMs;
 
@@ -648,6 +652,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLiveUIState();
     updateTimerDisplay();
     botStart.textContent = "Resume";
+    console.log(liveJobRef.isLive, liveJobRef.state);
   }
 
   function isOverlayOpen() {
