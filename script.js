@@ -1009,14 +1009,14 @@ function recalcSpotsFrom(startIndex) {
 
       (savedJob.inventory || []).forEach(it => {
 
-        if (!it.name && !it.qty) return;
+        const qty = Number(it.qty) || 0;
+        if (qty <= 0) return;
+
+        const price = Number(it.priceEach) || 0;
+        const total = qty * price;
 
         const row = document.createElement("div");
         row.className = "inv-mat-row";
-
-        const qty = Number(it.qty) || 0;
-        const price = Number(it.priceEach) || 0;
-        const total = qty * price;
 
         row.innerHTML = `
           <div class="inv-mat-name">${it.name}</div>
