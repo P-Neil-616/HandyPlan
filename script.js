@@ -1442,7 +1442,7 @@ function recalcSpotsFrom(startIndex) {
   setHeaderText();
 
   syncToday();
-  loadDay(0);
+  loadDay(findTodayIndex());
 
   // ===============================
   // TIME MODAL (Start / End picker)
