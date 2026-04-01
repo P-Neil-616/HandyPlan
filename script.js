@@ -1342,6 +1342,7 @@ function recalcSpotsFrom(startIndex) {
 
   function loadDay(i) {
     dayIndex = i;
+    console.log("LOAD DAY INDEX:", index, days[index]?.date);
 
     for (const day of days) {
       for (const item of day.timelineList) {
@@ -2902,8 +2903,9 @@ function recalcSpotsFrom(startIndex) {
     btn.onclick = closePanels;
   });
 
-  syncToday();
-  const todayIndex = findTodayIndex();
-  loadDay(todayIndex);
+syncToday();
+const todayIndex = findTodayIndex();
+document.title = "IDX " + todayIndex + " / " + new Date(days[todayIndex].date).toDateString();
+loadDay(todayIndex);
 
 });
