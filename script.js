@@ -494,7 +494,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let diffDays = Math.floor((today - firstStored) / 86400000);
 
-    if (diffDays <= 0) return;
+    if (diffDays <= 0) {
+      dayIndex = findTodayIndex();
+      saveAll();
+      return;
+    }
 
     for (let i = 1; i <= diffDays; i++) {
 
