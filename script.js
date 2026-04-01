@@ -515,7 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sortDaysChronologically();
 
-    dayIndex = 0;
+    dayIndex = findTodayIndex();
     saveAll();
   }
 
