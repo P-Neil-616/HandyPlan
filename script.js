@@ -1376,14 +1376,12 @@ function recalcSpotsFrom(startIndex) {
 
     nextSlotMins = timelineList[0]?.timeMins ?? d.dayStartMins;
 
+    bottomMode = "timeline";
+    updateBottomBarMode();
+
     const liveExists = days.some(day =>
       day.timelineList.some(it => it.type === "job" && it.job?.isLive)
     );
-
-    if (liveExists) {
-      bottomMode = "timeline";
-      updateBottomBarMode();
-    }
 
     renderTimeline();
 
