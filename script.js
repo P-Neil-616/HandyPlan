@@ -1353,7 +1353,7 @@ function recalcSpotsFrom(startIndex) {
 
   function loadDay(i) {
     dayIndex = i;
-    console.log("LOAD DAY INDEX:", index, days[index]?.date);
+    console.log("LOAD DAY INDEX:", i, days[i]?.date);
 
     for (const day of days) {
       for (const item of day.timelineList) {
