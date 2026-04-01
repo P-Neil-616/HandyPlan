@@ -696,19 +696,30 @@ document.addEventListener("DOMContentLoaded", () => {
   function findTodayIndex() {
 
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     for (let i = 0; i < days.length; i++) {
-
       const d = new Date(days[i].date);
-      d.setHours(0,0,0,0);
+      d.setHours(0, 0, 0, 0);
 
       if (d.getTime() === today.getTime()) {
         return i;
       }
     }
 
-    return 0;
+    days.push(makeDay(new Date(today)));
+    sortDaysChronologically();
+
+    for (let i = 0; i < days.length; i++) {
+      const d = new Date(days[i].date);
+      d.setHours(0, 0, 0, 0);
+
+      if (d.getTime() === today.getTime()) {
+        return i;
+      }
+    }
+
+    return days.length - 1;
   }
 
   loadAll(); // if storage exists, this overwrites days
