@@ -1379,10 +1379,6 @@ function recalcSpotsFrom(startIndex) {
     bottomMode = "timeline";
     updateBottomBarMode();
 
-    const liveExists = days.some(day =>
-      day.timelineList.some(it => it.type === "job" && it.job?.isLive)
-    );
-
     renderTimeline();
 
     draftJob.inventory = masterInventory.map(it => ({
