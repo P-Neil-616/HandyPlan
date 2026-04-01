@@ -1974,8 +1974,6 @@ function recalcSpotsFrom(startIndex) {
     }
     saveAll();
 
-    console.log("AFTER WIPE", draftJob.title, draftJob.notes);
-
     // close editor
     jobBlock.classList.add("hidden");
     draftJob._active = false;
